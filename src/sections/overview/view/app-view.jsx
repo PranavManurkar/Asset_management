@@ -100,13 +100,13 @@ export default function AppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
-            title="Current Visits"
+            title="Issue Distribution"
             chart={{
               series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Solved', value: 4344 },
+                { label: 'Unsolved', value: 5435 },
+                { label: 'Working', value: 1443 },
+                { label: 'Critical unsolved', value: 4443 },
               ],
             }}
           />
