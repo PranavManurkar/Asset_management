@@ -141,12 +141,10 @@ export default function AppView() {
           <AppCurrentVisits
             title="Complaint Distributrion"
             chart={{
-              series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
-              ],
+              series: assets.map(asset => ({
+                label: asset.type.charAt(0).toUpperCase() + asset.type.slice(1), 
+                value: asset.complaints,
+              })),
             }}
           />
         </Grid>
