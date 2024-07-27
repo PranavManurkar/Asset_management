@@ -1,5 +1,11 @@
 import { useState } from 'react';
 
+import { useAssets } from '../view-asset-data.mjs';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -7,7 +13,6 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import { users } from 'src/_mock/user';
@@ -22,7 +27,7 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-
+import { firebaseConfig } from '../asset-data.mjs';
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
@@ -48,7 +53,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
+      const newSelecteds = assets.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -87,8 +92,9 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const assets = useAssets();
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: assets,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -119,16 +125,16 @@ export default function UserPage() {
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={users.length}
+                rowCount={assets.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
+                  { id: 'count', label: 'count' },
+                  { id: 'next_maintenance', label: 'Next Maintenance' },
+                  { id: 'complaints', label: 'Complaints', align: 'center' },
+                  { id: 'criticality', label: 'Criticality' },
                   { id: '' },
                 ]}
               />
@@ -137,13 +143,10 @@ export default function UserPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
                       name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
+                      count={row.count}
+                      criticality={row.criticality}
+                      // complaint={row.complaint}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />
@@ -151,7 +154,7 @@ export default function UserPage() {
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, assets.length)}
                 />
 
                 {notFound && <TableNoData query={filterName} />}
@@ -163,7 +166,7 @@ export default function UserPage() {
         <TablePagination
           page={page}
           component="div"
-          count={users.length}
+          count={assets.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}

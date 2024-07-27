@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getDatabase, ref, set, push, update } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
 // Define your asset data
-const asset_name = "MA";
+const asset_name = "MAAS";
 const count = 2;
 const maintainence_period = 1;
 const last_maintainence = 88;
@@ -35,6 +35,7 @@ set(ref(db, 'assets/' + Date.now().toString()), {
   count: count,
   cost: 0,  // You need to define 'cost' or remove this field if not needed
   maintainence_period: maintainence_period,
+  warranty: warranty,
   last_maintainence: last_maintainence,
   next_maintainence: last_maintainence + maintainence_period,
   remaining_warranty: warranty,
@@ -46,3 +47,6 @@ set(ref(db, 'assets/' + Date.now().toString()), {
 .catch((error) => {
   console.error('The write failed...', error);
 });
+
+// Export the firebaseConfig object
+export { firebaseConfig };
