@@ -10,6 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from 'react';
+import insertData from 'src/sections/user/asset-data.mjs';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const currencies = [
@@ -23,9 +24,22 @@ const currencies = [
     }
 ];
 
-export default function BasicMenu({ title, option1, option2, option3 }) {
+export default function BasicMenu() {
   const [value, setValue] = useState(dayjs('2022-04-17'));
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [asset, setAsset] = useState({
+    name: "",
+    count: 0,
+    cost: 0,  
+    maintainence_period: "",
+    warranty: 0,
+    last_maintainence: "",
+    next_maintainence: "",
+    remaining_warranty: 0,
+    criticality: "critical",
+  })
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -35,8 +49,16 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
   };
 
   const handleNewAsset = () => {
-    setValue(null);
+    insertData(asset);
+    setAnchorEl(null);
   };
+
+  const handleChange = (e) => {
+    setAsset((prevAsset)=> ({
+      ...prevAsset,
+      [e.target.name]: e.target.value,
+    }))
+  }
 
   return (
     <div>
@@ -50,7 +72,7 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        {title}
+        Add asset
       </Button>
       <Menu
         id="basic-menu"
@@ -64,14 +86,18 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
         {/* <MenuItem onClick={handleClose}>{option1}</MenuItem>
         <MenuItem onClick={handleClose}>{option2}</MenuItem>
         <MenuItem onClick={handleClose}>{option3}</MenuItem> */}
-        <MenuItem><TextField id="outlined-basic" label="Name" variant="outlined" /></MenuItem>
-        <MenuItem><TextField id="filled-basic" label="Quantity" variant="outlined" /></MenuItem>
-        <MenuItem><TextField id="standard-basic" label="Warranty in years" variant="outlined" /></MenuItem>
+        <MenuItem><TextField id="outlined-basic" name="name" label="Name" variant="outlined" onChange={handleChange}/></MenuItem>
+        <MenuItem><TextField id="filled-basic" name="count" label="Quantity" variant="outlined" onChange={handleChange}/></MenuItem>
+        <MenuItem><TextField id="standard-basic" name="warranty" label="Warranty in years" variant="outlined" onChange={handleChange}/></MenuItem>
+        <MenuItem><TextField id="standard-basic" name="cost" label="Cost" variant="outlined" onChange={handleChange}/></MenuItem>
+        <MenuItem><TextField id="standard-basic" name="maintainence_period" label="Maintenance period" variant="outlined" onChange={handleChange}/></MenuItem>
         <MenuItem><TextField
           id="outlined-select-currency"
+          name="criticality"
+          onChange={handleChange}
           select
           label="Select"
-          defaultValue="EUR"
+          defaultValue="critical"
           helperText="Please select criticality"
         >
           {currencies.map((option) => (
@@ -84,15 +110,16 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker', 'DatePicker']}>
             <DatePicker
+            name="next_maintainence"
+            onChange={handleChange}
             label="Next Maintainence"
             value={value}
-            onChange={(newValue) => setValue(newValue)}
             />
             </DemoContainer>
             </LocalizationProvider>
         </MenuItem>
         <MenuItem>
-            <Button variant="contained" color="inherit" onlick={handleNewAsset}>Add</Button>
+            <Button variant="contained" color="inherit" onClick={handleNewAsset}>Add</Button>
         </MenuItem>
       </Menu>
     </div>

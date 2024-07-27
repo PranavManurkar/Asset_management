@@ -1,6 +1,4 @@
 import { useState } from 'react';
-
-import { useAssets } from '../view-asset-data.mjs';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
@@ -20,7 +18,7 @@ import { users } from 'src/_mock/user';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import BasicMenu from 'src/components/button/button';
-
+import { useAssets } from '../view-asset-data.mjs';
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
@@ -51,14 +49,14 @@ export default function UserPage() {
     }
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = assets.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelecteds = assets.map((n) => n.name);
+  //     setSelected(newSelecteds);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -109,12 +107,11 @@ export default function UserPage() {
         {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New Asset
         </Button> */}
-        <BasicMenu title="New Asset" option1="Solved" option2="Unsolved" option3="Critical" />
+        <BasicMenu />
       </Stack>
 
       <Card>
         <UserTableToolbar
-          numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
@@ -126,14 +123,15 @@ export default function UserPage() {
                 order={order}
                 orderBy={orderBy}
                 rowCount={assets.length}
-                numSelected={selected.length}
+                // numSelected={selected.length}
                 onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
+                // onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'count', label: 'count' },
+                  { id: 'Quantity', label: 'Quantity' },
                   { id: 'next_maintenance', label: 'Next Maintenance' },
                   { id: 'complaints', label: 'Complaints', align: 'center' },
+                  { id: 'rate', label: 'Rate'},
                   { id: 'criticality', label: 'Criticality' },
                   { id: '' },
                 ]}
@@ -146,7 +144,9 @@ export default function UserPage() {
                       name={row.name}
                       count={row.count}
                       criticality={row.criticality}
-                      // complaint={row.complaint}
+                      next_maintainence={row.next_maintainence}
+                      complaints={row.complaints}
+                      rate={row.rate}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />

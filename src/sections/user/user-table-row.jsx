@@ -18,8 +18,10 @@ import Iconify from 'src/components/iconify';
 export default function UserTableRow({
   selected,
   name,
+  rate,
   count,
   next_maintainence,
+  criticality,
   complaints,
   status,
   handleClick,
@@ -31,6 +33,14 @@ export default function UserTableRow({
   };
 
   const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  const handleEdit = () => {
+    setOpen(null);
+  };
+
+  const handleDelete = () => {
     setOpen(null);
   };
 
@@ -55,9 +65,9 @@ export default function UserTableRow({
         <TableCell>{next_maintainence}</TableCell>
 
         <TableCell align="center">{complaints ? 'Yes' : 'No'}</TableCell>
-
+        <TableCell>{rate}</TableCell>
         <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
+          <Label color={(criticality === 'critical' ? 'error' : 'success')}>{criticality}</Label>
         </TableCell>
 
         <TableCell align="right">
@@ -77,12 +87,12 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleEdit}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -93,6 +103,8 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   count: PropTypes.any,
+  rate: PropTypes.any,
+  criticality: PropTypes.any,
   complaints: PropTypes.any,
   handleClick: PropTypes.func,
   name: PropTypes.any,

@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, push } from "firebase/database";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -18,7 +18,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
-// Define your asset data
+console.log(Date.now().toString());
+
+//Define your asset data
 const asset_name = "MAAS";
 const count = 2;
 const maintainence_period = 1;
@@ -27,26 +29,23 @@ const warranty = 4;
 const criticality = "critical";
 
 // Get a reference to the database
+// Initialize the database
 const db = getDatabase();
 
-// Set the data in the database
-set(ref(db, 'assets/' + Date.now().toString()), {
-  name: asset_name,
-  count: count,
-  cost: 0,  // You need to define 'cost' or remove this field if not needed
-  maintainence_period: maintainence_period,
-  warranty: warranty,
-  last_maintainence: last_maintainence,
-  next_maintainence: last_maintainence + maintainence_period,
-  remaining_warranty: warranty,
-  criticality: criticality
-})
-.then(() => {
-  console.log('Data saved successfully!');
-})
-.catch((error) => {
-  console.error('The write failed...', error);
-});
+// Use the database object with ref
+const dbRef = ref(db, 'assets/' + Date.now().toString());
+
+const insertData = (object) => {
+  set(dbRef, object)
+    .then(() => {
+      console.log("Pushed successfully!");
+    })
+    .catch((e) => {
+      console.log("Error: ", e);
+    });
+};
+
+export default insertData;
 
 // Export the firebaseConfig object
 export { firebaseConfig };
