@@ -21,7 +21,7 @@ import AppConversionRates from '../app-conversion-rates';
 
 export default function AppView() {
   const [assets] = useState([{
-    type: 'road',
+    type: 'Solved',
     quantity: 10 ,
     price: 1000 ,
     warranty: 5 ,
@@ -29,7 +29,7 @@ export default function AppView() {
     complaints: 100
   } ,
   {
-    type: 'pole',
+    type: 'Critical unsolved',
     quantity: 4 ,
     price: 200 ,
     warranty: 5 ,
@@ -37,7 +37,7 @@ export default function AppView() {
     complaints: 200
   } ,
   {
-    type: 'truck',
+    type: 'Unsolved',
     quantity: 13 ,
     price: 0 ,
     warranty: 5 ,
@@ -103,7 +103,7 @@ export default function AppView() {
 
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
-            title="History"
+            title="Budget Allocation"
             subheader=""
             chart={{
               labels: [
