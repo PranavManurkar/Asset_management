@@ -4,9 +4,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Iconify from 'src/components/iconify';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';import dayjs from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from 'react';
 
@@ -23,6 +24,7 @@ const currencies = [
 ];
 
 export default function BasicMenu({ title, option1, option2, option3 }) {
+  const [value, setValue] = useState(dayjs('2022-04-17'));
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -76,8 +78,12 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
         </TextField></MenuItem>
         <MenuItem>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DatePicker']}>
-            <DatePicker label="Basic date picker" />
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+            <DatePicker
+            label="Next Maintainence"
+            value={value}
+            onChange={(newValue) => setValue(newValue)}
+            />
             </DemoContainer>
             </LocalizationProvider>
         </MenuItem>

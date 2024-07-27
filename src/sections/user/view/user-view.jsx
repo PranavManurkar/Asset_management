@@ -107,11 +107,11 @@ export default function UserPage() {
       </Stack>
 
       <Card>
-        {/* <UserTableToolbar
+        <UserTableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
-        /> */}
+        />
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
