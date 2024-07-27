@@ -14,6 +14,7 @@ import { users } from 'src/_mock/user';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import BasicMenu from 'src/components/button/button';
 
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
@@ -97,19 +98,20 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">Assets</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
+        {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+          New Asset
+        </Button> */}
+        <BasicMenu title="New Asset" option1="Solved" option2="Unsolved" option3="Critical" />
       </Stack>
 
       <Card>
-        <UserTableToolbar
+        {/* <UserTableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
-        />
+        /> */}
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
