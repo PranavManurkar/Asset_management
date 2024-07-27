@@ -1,9 +1,11 @@
 // import { faker } from '@faker-js/faker';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import { firebaseConfig, app, firestore } from 'src/sections/user/asset-data.mjs';
+import { getDatabase, ref, child, get } from "firebase/database";
 
 // import Iconify from 'src/components/iconify';
 
@@ -58,6 +60,30 @@ export default function AppView() {
     }
     return sum;
   };
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `budget`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        const retrievedData = snapshot.val();
+        const extractedData = Object.values(retrievedData).map(item => ({
+          date: item.date,
+          alloted: item.alloted,
+          budget: item.budget,
+        }));
+        setData(extractedData);
+        console.log(extractedData);
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }, []);
+
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -68,7 +94,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Current budget"
-            total={15000000000}
+            total={150000000}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -101,41 +127,89 @@ export default function AppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="Budget Allocation"
             subheader=""
             chart={{
-              labels: [
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ],
+              // labels: [
+              //   '01/01/2003',
+              //   '02/01/2003',
+              //   '03/01/2003',
+              //   '04/01/2003',
+              //   '05/01/2003',
+              //   '06/01/2003',
+              //   '07/01/2003',
+              //   '08/01/2003',
+              //   '09/01/2003',
+              //   '10/01/2003',
+              //   '11/01/2003',
+              // ]
+              labels: data.map(item => {
+                if (typeof item.date === 'string') {
+                  console.log("Correct");
+                  // Format the date properly
+                  const [month, day, year] = item.date.split('-');
+                  // Convert to desired format if necessary
+                  return new Date("${day}/${month}/${year}").toISOString; // For example, `DD/MM/YYYY`
+                } else {
+                  console.log("Incorrect");
+                  return ''; // Fallback if date is not a string
+                }
+              }),
               series: [
                 {
                   name: 'Budget',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: [44, 77, 88],
                 },
                 {
                   name: 'Requirement',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: [30, 90, 77],
+                },
+              ],
+            }}
+          />
+        </Grid> */}
+        <Grid xs={12} md={6} lg={8}>
+          <AppWebsiteVisits
+            title="Budget Allocation"
+            subheader=""
+            chart={{
+              labels: data.map(item => {
+                if (typeof item.date === 'string') {
+                  console.log("Correct");
+                  // Format the date properly
+                  const [month, day, year] = item.date.split('-');
+                  // Convert to desired format
+                  const formattedDate = new Date(`${year}-${month}-${day}`).toISOString(); // Format as YYYY-MM-DD
+                  return formattedDate;
+                } else {
+                  console.log("Incorrect");
+                  return ''; // Fallback if date is not a string
+                }
+              }),
+              series: [
+                {
+                  name: 'Budget',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: [44, 77, 88],
+                },
+                {
+                  name: 'Requirement',
+                  type: 'line',
+                  fill: 'solid',
+                  data: [30, 90, 77],
                 },
               ],
             }}
           />
         </Grid>
+
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits

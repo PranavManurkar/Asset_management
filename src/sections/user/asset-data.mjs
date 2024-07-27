@@ -48,4 +48,4 @@ const insertData = (object) => {
 export default insertData;
 
 // Export the firebaseConfig object
-export { firebaseConfig };
+export { firebaseConfig, app, firestore };
