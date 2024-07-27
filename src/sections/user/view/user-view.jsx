@@ -103,11 +103,10 @@ export default function UserPage() {
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Assets</Typography>
-
         {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New Asset
-        </Button> */}
-        <BasicMenu />
+        </Button> */}  
+        <BasicMenu />        
       </Stack>
 
       <Card>
@@ -146,7 +145,7 @@ export default function UserPage() {
                       criticality={row.criticality}
                       next_maintainence={row.next_maintainence}
                       complaints={row.complaints}
-                      rate={row.rate}
+                      rate={row.cost}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />
