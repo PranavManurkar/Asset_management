@@ -34,6 +34,10 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
     setAnchorEl(null);
   };
 
+  const handleNewAsset = () => {
+    setValue(null);
+  };
+
   return (
     <div>
       <Button
@@ -86,6 +90,9 @@ export default function BasicMenu({ title, option1, option2, option3 }) {
             />
             </DemoContainer>
             </LocalizationProvider>
+        </MenuItem>
+        <MenuItem>
+            <Button variant="contained" color="inherit" onlick={handleNewAsset}>Add</Button>
         </MenuItem>
       </Menu>
     </div>
