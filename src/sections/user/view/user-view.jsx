@@ -49,14 +49,14 @@ export default function UserPage() {
     }
   };
 
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelecteds = assets.map((n) => n.name);
-  //     setSelected(newSelecteds);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = assets.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -122,9 +122,9 @@ export default function UserPage() {
                 order={order}
                 orderBy={orderBy}
                 rowCount={assets.length}
-                // numSelected={selected.length}
+                numSelected={selected.length}
                 onRequestSort={handleSort}
-                // onSelectAllClick={handleSelectAllClick}
+                onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'Quantity', label: 'Quantity' },
@@ -140,6 +140,7 @@ export default function UserPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
+                      id = {row.id}
                       name={row.name}
                       count={row.count}
                       criticality={row.criticality}

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-
+import { doc, deleteDoc } from "firebase/firestore";
+import { firebaseConfig, app, firestore } from './asset-data.mjs';
+import { getDatabase, ref, set, push, remove } from "firebase/database";
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
@@ -17,6 +19,7 @@ import Iconify from 'src/components/iconify';
 
 export default function UserTableRow({
   selected,
+  id,
   name,
   rate,
   count,
@@ -40,9 +43,18 @@ export default function UserTableRow({
     setOpen(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async (key) => {
     setOpen(null);
+    const db = getDatabase();
+    console.log(key);
+    try {
+      await remove(ref(db, "assets/" + key));
+      console.log("Document deleted with key:", key);
+    } catch (error) {
+      console.error("Error deleting document:", error);
+    }
   };
+  
 
   return (
     <>
@@ -102,6 +114,7 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
+  id: PropTypes.any,
   count: PropTypes.any,
   rate: PropTypes.any,
   criticality: PropTypes.any,

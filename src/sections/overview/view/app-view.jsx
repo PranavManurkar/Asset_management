@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { firebaseConfig, app, firestore } from 'src/sections/user/asset-data.mjs';
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, query, orderByChild, endAt, child, get } from "firebase/database";
 
 // import Iconify from 'src/components/iconify';
 
@@ -63,26 +63,105 @@ export default function AppView() {
 
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const dbRef = ref(getDatabase());
-    get(child(dbRef, `budget`)).then((snapshot) => {
+  async function calculateMaintenanceCost(maxDate) {
+    const db = getDatabase();
+    const assetsRef = ref(db, 'assets');
+  
+    try {
+      // Query to get assets where `next-maintainence` <= maxDate
+      const assetsQuery = query(
+        assetsRef,
+        orderByChild('next_maintainence'),
+        endAt(maxDate) // Filter for dates less than or equal to maxDate
+      );
+  
+      const snapshot = await get(assetsQuery);
+  
       if (snapshot.exists()) {
-        const retrievedData = snapshot.val();
-        const extractedData = Object.values(retrievedData).map(item => ({
-          date: item.date,
-          alloted: item.alloted,
-          budget: item.budget,
-        }));
-        setData(extractedData);
-        console.log(extractedData);
+        const assets = snapshot.val();
+        let totalMaintenanceCost = 0;
+  
+        for (const assetKey in assets) {
+          const asset = assets[assetKey];
+          const nextMaintainenceDate = new Date(asset['next_maintainence']);
+          const warrantyPeriod = asset['warranty'] || 0; // Warranty period in years
+  
+          // Assuming assetKey is a timestamp
+          const creationDate = new Date(parseInt(assetKey, 10));
+          const warrantyEndDate = new Date(creationDate);
+          warrantyEndDate.setFullYear(creationDate.getFullYear() + warrantyPeriod);
+  
+          // Check if next maintenance date is within warranty period
+          if (nextMaintainenceDate > warrantyEndDate) {
+            totalMaintenanceCost += asset['maintainence_cost'] || 0;
+          }
+        }
+  
+        console.log("Total Maintenance Cost:", totalMaintenanceCost);
+        console.log(totalMaintenanceCost);
+        return totalMaintenanceCost;
       } else {
         console.log("No data available");
+        return 0;
       }
-    }).catch((error) => {
-      console.error(error);
-    });
-  }, []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return 0;
+    }
+  }
 
+  // useEffect(() => {
+  //   const dbRef = ref(getDatabase());
+  //   get(child(dbRef, `budget`)).then((snapshot) => {
+  //     if (snapshot.exists()) {
+  //       const retrievedData = snapshot.val();
+  //       const extractedData = Object.values(retrievedData).map(item => ({
+  //         date: item.date,
+  //         alloted: item.alloted,
+  //         required: calculateMaintenanceCost(item.date) || 0,
+  //       }));
+  //       setData(extractedData);
+  //       console.log(extractedData);
+  //     } else {
+  //       console.log("No data available");
+  //     }
+  //   }).catch((error) => {
+  //     console.error(error);
+  //   });
+  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, `budget`));
+  
+        if (snapshot.exists()) {
+          const retrievedData = snapshot.val();
+          const dataArray = Object.values(retrievedData);
+  
+          // Fetch maintenance costs for all items
+          const extractedData = await Promise.all(dataArray.map(async (item) => {
+            const requiredCost = await calculateMaintenanceCost(item.date) || 0;
+            return {
+              date: item.date,
+              alloted: item.alloted,
+              required: requiredCost,
+            };
+          }));
+  
+          setData(extractedData);
+          console.log(extractedData);
+        } else {
+          console.log("No data available");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
   return (
     <Container maxWidth="xl">
@@ -94,7 +173,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Current budget"
-            total={150000000}
+            total={1500000}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -197,13 +276,13 @@ export default function AppView() {
                   name: 'Budget',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 77, 88],
+                  data: data.map(item => item.alloted || 0),
                 },
                 {
                   name: 'Requirement',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 90, 77],
+                  data: data.map(item => item.required || 0),
                 },
               ],
             }}
