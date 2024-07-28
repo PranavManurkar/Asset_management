@@ -33,9 +33,10 @@ const criticality = "critical";
 const db = getDatabase();
 
 // Use the database object with ref
-const dbRef = ref(db, 'assets/' + Date.now().toString());
 
 const insertData = (object) => {
+  const dbRef = ref(db, 'assets/' + Date.now().toString());
+  console.log('assets/' + Date.now().toString());
   set(dbRef, object)
     .then(() => {
       console.log("Pushed successfully!");

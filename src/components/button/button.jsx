@@ -1,31 +1,24 @@
-import Menu from '@mui/material/Menu';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Iconify from 'src/components/iconify';
 import TextField from '@mui/material/TextField';
-import dayjs from 'dayjs';
+import { useState } from 'react';
+import insertData from 'src/sections/user/asset-data.mjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useState } from 'react';
-import insertData from 'src/sections/user/asset-data.mjs';
+import dayjs from 'dayjs';
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const currencies = [
-  {
-    value: 'critical',
-    label: 'Critical',
-  },
-  {
-    value: 'normal',
-    label: 'Normal',
-  }
+  { value: 'critical', label: 'Critical' },
+  { value: 'normal', label: 'Normal' }
 ];
 
-export default function BasicMenu() {
+export default function BasicDialog() {
+  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(dayjs('17-04-2022', 'DD-MM-YYYY'));
-  const [anchorEl, setAnchorEl] = useState(null);
-
   const [asset, setAsset] = useState({
     name: "",
     count: 0,
@@ -39,23 +32,16 @@ export default function BasicMenu() {
     criticality: "critical",
   });
 
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleNewAsset = () => {
     insertData(asset);
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleChange = (e) => {
-    setAsset((prevAsset) => ({
+    setAsset(prevAsset => ({
       ...prevAsset,
       [e.target.name]: e.target.value,
     }));
@@ -63,7 +49,7 @@ export default function BasicMenu() {
 
   const handleDateChange = (newValue) => {
     setValue(newValue);
-    setAsset((prevAsset) => ({
+    setAsset(prevAsset => ({
       ...prevAsset,
       next_maintainence: newValue ? newValue.format('DD-MM-YYYY') : null,
     }));
@@ -71,118 +57,95 @@ export default function BasicMenu() {
 
   return (
     <div>
-      <Button
-        id="basic-button"
-        variant="contained"
-        color="inherit"
-        startIcon={<Iconify icon="eva:plus-fill" />}
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
+      <Button variant="contained" color="inherit" onClick={handleClickOpen}>
         Add asset
       </Button>
-
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add New Asset</DialogTitle>
+        <DialogContent>
           <TextField
-            id="outlined-basic"
             name="name"
             label="Name"
             variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={handleChange}
           />
-        </MenuItem>
-        <MenuItem>
           <TextField
-            id="filled-basic"
             name="count"
             label="Quantity"
-            variant="outlined"
             type="number"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={handleChange}
           />
-        </MenuItem>
-        <MenuItem>
           <TextField
-            id="standard-basic"
             name="warranty"
             label="Warranty in years"
-            variant="outlined"
             type="number"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={handleChange}
           />
-        </MenuItem>
-        <MenuItem>
           <TextField
-            id="standard-basic"
             name="cost"
             label="Cost"
-            variant="outlined"
             type="number"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={handleChange}
           />
-        </MenuItem>
-        <MenuItem>
           <TextField
-            id="standard-basic"
             name="maintainence_cost"
             label="Maintenance Cost"
             variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={handleChange}
           />
-        </MenuItem>
-        <MenuItem>
           <TextField
-            id="standard-basic"
             name="maintainence_period"
             label="Maintenance period"
             variant="outlined"
+            fullWidth
+            margin="normal"
             onChange={handleChange}
           />
-        </MenuItem>
-        <MenuItem>
           <TextField
-            id="outlined-select-currency"
             name="criticality"
-            onChange={handleChange}
+            label="Criticality"
             select
-            label="Select"
-            defaultValue="critical"
-            helperText="Please select criticality"
+            fullWidth
+            margin="normal"
+            onChange={handleChange}
+            SelectProps={{
+              native: true,
+            }}
           >
-            {currencies.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
+            {currencies.map(option => (
+              <option key={option.value} value={option.value}>
                 {option.label}
-              </MenuItem>
+              </option>
             ))}
           </TextField>
-        </MenuItem>
-        <MenuItem>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              name="next_maintainence"
               onChange={handleDateChange}
               label="Next Maintenance"
               value={value}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
               inputFormat="DD-MM-YYYY"
             />
           </LocalizationProvider>
-        </MenuItem>
-        <MenuItem>
-          <Button variant="contained" color="inherit" onClick={handleNewAsset}>Add</Button>
-        </MenuItem>
-      </Menu>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleNewAsset} variant="contained" color="inherit">Add</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
