@@ -26,6 +26,7 @@ import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import { firebaseConfig } from '../asset-data.mjs';
+import BasicDialog from 'src/components/button/button';
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
@@ -106,7 +107,7 @@ export default function UserPage() {
         {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New Asset
         </Button> */}  
-        <BasicMenu />        
+        <BasicDialog />        
       </Stack>
 
       <Card>
